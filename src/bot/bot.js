@@ -10,7 +10,7 @@ const bot = new Telegraf(BOT_TOKEN);
 const keyboard = Markup.inlineKeyboard([
   Markup.button.url('🛠 Update Position', 'https://uniswap-admin.vercel.app/liquidity'),
   Markup.button.callback('📚 Help', '/help'),
-  Markup.button.callback('📈 Positions', '/positions'),
+  Markup.button.callback('💰 Wallets', '/wallets'),
 ]);
 
 
@@ -28,15 +28,24 @@ bot.start(async (ctx) => {
 bot.command('login', authController.handleLogin);
 bot.command('help', infoController.handleHelp);
 bot.command('positions', infoController.handlePositions);
+bot.command('wallets', infoController.handleWallets);
+bot.command('swap', infoController.handleSwap);
 
 bot.on('callback_query', (ctx) => {
   const { data } = ctx.update.callback_query;
-  switch (data) {
-    case '/help':
+  const command = data.split('/')[1];
+  switch (command) {
+    case 'help':
       infoController.handleHelp(ctx);
       break;
-    case '/positions':
+    case 'positions':
       infoController.handlePositions(ctx);
+      break;
+    case 'wallets':
+      infoController.handleWallets(ctx);
+      break;
+    case 'swap':
+      infoController.handleSwap(ctx);
       break;
     default:
       console.warn(`Unknown callback query data: ${data}`);
