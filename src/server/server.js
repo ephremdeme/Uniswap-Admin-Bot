@@ -1,6 +1,7 @@
 const express = require('express');
 const { handleWebhook } = require('./controllers/webhookController');
 const logger = require('../utils/logger');
+const bot = require('../bot/bot');
 
 
 function startServer() {
@@ -10,6 +11,16 @@ function startServer() {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(handleErrors);
+
+    app.get('/', (req, res) => {
+        res.send('Hello World!');
+    });
+
+    app.post('/telegram-webhook', (req, res) => {
+        bot.handleUpdate(req.body, res);
+        res.sendStatus(200);
+        logger.info(`Telegram webhook called ${JSON.stringify(req.body)}`);
+    });
 
     app.post('/uniswap-webhook', handleWebhook);
 
