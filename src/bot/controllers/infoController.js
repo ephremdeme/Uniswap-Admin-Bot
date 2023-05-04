@@ -3,13 +3,10 @@ const logger = require('../../utils/logger');
 async function handleHelp(ctx) {
   const helpMessage = 'This bot helps you manage your Uniswap positions.\n\n' +
                       'Here are the available commands:\n' +
-                      '/login - Log in to the bot\n' +
-                      '/logout - Log out from the bot\n' +
                       '/positions - Get information about your Uniswap positions\n' +
                       '/help - Get help with using the bot';
 
   ctx.reply(helpMessage);
-  console.log( "Ctx =>  ", ctx.from);
   logger.info(`Help message sent to user ${ctx.from.id}`);
 }
 
