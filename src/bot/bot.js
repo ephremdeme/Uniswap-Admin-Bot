@@ -1,45 +1,46 @@
-const { Telegraf } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf');
 const { BOT_TOKEN } = process.env;
 const authController = require('./controllers/authController');
 const infoController = require('./controllers/infoController');
-const { handlePoolRemoveNotification, handlePoolRemovedNotification, handleTokenExchangeNotification, handleTokenExchangedNotification, handleErrorNotification } = require('./controllers/notificationController');
+const User = require('./models/user');
+const logger = require('../utils/logger');
+const { cacheUserId } = require('../utils/cacheUser');
 
 const bot = new Telegraf(BOT_TOKEN);
+const keyboard = Markup.inlineKeyboard([
+  Markup.button.url('🛠 Update Position', 'https://uniswap-admin.vercel.app/liquidity'),
+  Markup.button.callback('📚 Help', '/help'),
+  Markup.button.callback('📈 Positions', '/positions'),
+]);
 
-bot.start((ctx) => ctx.reply(`Welcome to Uniswap Admin Bot, ${ctx.from.username}! \nType /help to see available commands`));
+
+bot.start(async (ctx) => {
+  ctx.reply(`Hello @${ctx.from.username}, Welcome to Uniswap Admin Bot!`, keyboard);
+
+  await User.updateOne({ telegramId: ctx.from.id }, { telegramId: ctx.from.id, ...ctx.from }, { upsert: true }).catch((err) => {
+    logger.error(`Error saving user with Telegram ID ${ctx.from.id}: ${err.message}`);
+  });
+  cacheUserId(ctx.from.id);
+  logger.info(`User ${ctx.from.id} logged in`);
+
+});
+
 bot.command('login', authController.handleLogin);
-bot.command('logout', authController.handleLogout);
 bot.command('help', infoController.handleHelp);
 bot.command('positions', infoController.handlePositions);
-bot.hears('poolRemove', (ctx) => {
-  const { poolInfo, tokens, amount } = ctx.update.poolRemove;
-  const message = `Liquidity pool ${poolInfo} is about to be removed. Tokens: ${tokens}. Amount: ${amount}.`;
-  ctx.reply(message);
+
+bot.on('callback_query', (ctx) => {
+  const { data } = ctx.update.callback_query;
+  switch (data) {
+    case '/help':
+      infoController.handleHelp(ctx);
+      break;
+    case '/positions':
+      infoController.handlePositions(ctx);
+      break;
+    default:
+      console.warn(`Unknown callback query data: ${data}`);
+  }
 });
-bot.hears('poolRemoved', (ctx) => {
-  const { transactionInfo, tokens, amount } = ctx.update.poolRemoved;
-  const message = `Liquidity pool has been removed. Tokens: ${tokens}. Amount: ${amount}. Transaction Info: ${transactionInfo}.`;
-  ctx.reply(message);
-});
-bot.hears('tokenExchange', (ctx) => {
-  const { tokens } = ctx.update.tokenExchange;
-  const message = `Tokens ${tokens} are about to be exchanged to configured positions.`;
-  ctx.reply(message);
-});
-bot.hears('tokenExchanged', (ctx) => {
-  const { transactionInfo, tokens, amount } = ctx.update.tokenExchanged;
-  const message = `Tokens ${tokens} have been exchanged to configured positions. Amount: ${amount}. Transaction Info: ${transactionInfo}.`;
-  ctx.reply(message);
-});
-bot.on('error', (ctx, err) => {
-  const message = `There was an error processing your request: ${err.message}`;
-  ctx.reply(message);
-  console.error(err);
-});
-bot.on('poolRemove', handlePoolRemoveNotification);
-bot.on('poolRemoved', handlePoolRemovedNotification);
-bot.on('tokenExchange', handleTokenExchangeNotification);
-bot.on('tokenExchanged', handleTokenExchangedNotification);
-bot.on('error', handleErrorNotification);
 
 module.exports = bot;
