@@ -33,19 +33,19 @@ bot.command('swap', infoController.handleSwap);
 
 bot.on('callback_query', (ctx) => {
   const { data } = ctx.update.callback_query;
-  const command = data.split('/')[1];
+  const command = data.split('-')[0];
   switch (command) {
-    case 'help':
+    case '/help':
       infoController.handleHelp(ctx);
       break;
-    case 'positions':
+    case '/positions':
       infoController.handlePositions(ctx);
       break;
-    case 'wallets':
+    case '/wallets':
       infoController.handleWallets(ctx);
       break;
-    case 'swap':
-      infoController.handleSwap(ctx);
+    case '/remove':
+      infoController.handleRemoveLiquidity(ctx);
       break;
     default:
       console.warn(`Unknown callback query data: ${data}`);
