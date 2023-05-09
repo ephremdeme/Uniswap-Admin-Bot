@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { BOT_TOKEN } = process.env;
+const { BOT_TOKEN, ALLOWED_USERS = 'ephremdev,boxexchanger' } = process.env;
 const authController = require('./controllers/authController');
 const infoController = require('./controllers/infoController');
 const User = require('./models/user');
@@ -13,6 +13,19 @@ const keyboard = Markup.inlineKeyboard([
   Markup.button.callback('💰 Wallets', '/wallets'),
 ]);
 
+bot.use(async (ctx, next) => {
+  const { username } = ctx.from;
+  if (ALLOWED_USERS.split(',').includes(username)) {
+    await next();
+  } else {
+    logger.warn(`Unauthorized access from user @${username}`);
+    ctx.reply('🚫 You are not authorized to use this bot. Contact Admin.');
+  }
+});
+
+bot.catch((err, ctx) => {
+  console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)
+})
 
 bot.start(async (ctx) => {
   ctx.reply(`Hello @${ctx.from.username}, Welcome to Uniswap Admin Bot!`, keyboard);
@@ -27,7 +40,6 @@ bot.start(async (ctx) => {
 
 bot.command('login', authController.handleLogin);
 bot.command('help', infoController.handleHelp);
-bot.command('positions', infoController.handlePositions);
 bot.command('wallets', infoController.handleWallets);
 bot.command('swap', infoController.handleSwap);
 
@@ -46,6 +58,9 @@ bot.on('callback_query', (ctx) => {
       break;
     case '/remove':
       infoController.handleRemoveLiquidity(ctx);
+      break;
+    case '/swap':
+      infoController.handleRemoveLiquidityAndSwap(ctx);
       break;
     default:
       console.warn(`Unknown callback query data: ${data}`);
