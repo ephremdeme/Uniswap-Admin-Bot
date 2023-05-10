@@ -17,7 +17,7 @@ BOT_TOKEN = YOUR_BOT_TOKEN
 PORT = 3000
 WEBHOOK_URL = YOUR_WEBHOOK_URL # The domain name of your server
 API_URL = YOUR_API_URL # The url of the uniswap-admin-api
-MONGO_DB_URL = YOUR_MONGO_DB_URL
+MONGO_DB_URI = YOUR_MONGO_DB_URL
 API_TOKEN = YOUR_API_TOKEN # The token used to access the admin API server
 ALLOWED_USERS = COMMA_SEPARATED_USERNAMES # The telegram user name of the users allowed to use the bot
 ```
