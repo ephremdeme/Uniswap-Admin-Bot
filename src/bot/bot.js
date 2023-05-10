@@ -41,7 +41,6 @@ bot.start(async (ctx) => {
 bot.command('login', authController.handleLogin);
 bot.command('help', infoController.handleHelp);
 bot.command('wallets', infoController.handleWallets);
-bot.command('swap', infoController.handleSwap);
 
 bot.on('callback_query', (ctx) => {
   const { data } = ctx.update.callback_query;
