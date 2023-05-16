@@ -39,7 +39,7 @@ async function handlePositions(ctx) {
         positionMessage += `Current price: ${position.currentPrice}\n\n`;
 
         ctx.reply(positionMessage, Markup.inlineKeyboard([
-          [Markup.button.webApp('🛠 Edit', `https://dlvpwhatzq.loclx.io/webapp?url=${data.split('-')[1]}/${position.id}&token=${process.env.API_TOKEN}`),
+          [Markup.button.webApp('🛠 Edit', `https://uniswap-admin-git-feature-ephremdeme.vercel.app/webapp?url=${data.split('-')[1]}/${position.id}&token=${process.env.API_TOKEN}`),
           Markup.button.callback(
             `🔄 Remove & Swap to ${position.token0.symbol}`,
             `/swap-${data.split('-')[1]}/${position.id}/${position.token0.symbol}`,
