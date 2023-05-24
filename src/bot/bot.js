@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { BOT_TOKEN, ALLOWED_USERS = 'ephremdev,boxexchanger' } = process.env;
+const { BOT_TOKEN, ALLOWED_USERS  } = process.env;
 const authController = require('./controllers/authController');
 const infoController = require('./controllers/infoController');
 const User = require('./models/user');

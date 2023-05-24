@@ -39,18 +39,21 @@ async function handlePositions(ctx) {
         positionMessage += `Current price: ${position.currentPrice}\n\n`;
 
         ctx.reply(positionMessage, Markup.inlineKeyboard([
-          [Markup.button.callback(
-            '❌ Remove',
-            `/remove-${data.split('-')[1]}/${position.id}`,
-          )],
-          [Markup.button.callback(
+          [Markup.button.webApp('🛠 Edit', `https://uniswap-admin.vercel.app/webapp?url=${process.env.API_URL}/api${data.split('-')[1]}/${position.id}&token=${process.env.API_TOKEN}`),
+          Markup.button.callback(
             `🔄 Remove & Swap to ${position.token0.symbol}`,
             `/swap-${data.split('-')[1]}/${position.id}/${position.token0.symbol}`,
           ),
-          Markup.button.callback(
-            `🔄 Remove & Swap to ${position.token1.symbol}`,
-            `/swap-${data.split('-')[1]}/${position.id}/${position.token1.symbol}`,
-          )],
+          ],
+          [
+            Markup.button.callback(
+              '❌ Remove',
+              `/remove-${data.split('-')[1]}/${position.id}`,
+            ),
+            Markup.button.callback(
+              `🔄 Remove & Swap to ${position.token1.symbol}`,
+              `/swap-${data.split('-')[1]}/${position.id}/${position.token1.symbol}`,
+            )],
         ]));
       });
       logger.info(`Positions sent to user ${telegramId}`);
