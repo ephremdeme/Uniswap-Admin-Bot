@@ -8,7 +8,6 @@ const { cacheUserId } = require('../utils/cacheUser');
 
 const bot = new Telegraf(BOT_TOKEN);
 const keyboard = Markup.inlineKeyboard([
-  Markup.button.url('🛠 Update Position', `${process.env.API_URL}/liquidity`),
   Markup.button.callback('📚 Help', '/help'),
   Markup.button.callback('💰 Wallets', '/wallets'),
 ]);
