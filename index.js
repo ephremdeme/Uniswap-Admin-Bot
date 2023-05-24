@@ -8,9 +8,9 @@ const bot = require('./src/bot/bot');
 
 
 (async () => {
-    await bot.telegram.setWebhook(`${process.env.WEBHOOK_URL}/telegram-webhook`)
 
     await connectDb();
     await initUserIdsCache();
     server.startServer()
+    await bot.launch();
 })()
