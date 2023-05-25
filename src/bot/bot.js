@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { BOT_TOKEN, ALLOWED_USERS  } = process.env;
+const { BOT_TOKEN, ALLOWED_USERS = []  } = process.env;
 const authController = require('./controllers/authController');
 const infoController = require('./controllers/infoController');
 const User = require('./models/user');
@@ -13,11 +13,11 @@ const keyboard = Markup.inlineKeyboard([
 ]);
 
 bot.use(async (ctx, next) => {
-  const { username } = ctx.from;
-  if (ALLOWED_USERS.split(',').includes(username)) {
+  const { username, id } = ctx.from;
+  if (ALLOWED_USERS.includes(id)) {
     await next();
   } else {
-    logger.warn(`Unauthorized access from user @${username}`);
+    logger.warn(`Unauthorized access from user @${username} and Telegram ID ${ctx.from.id}`);
     ctx.reply('🚫 You are not authorized to use this bot. Contact Admin.');
   }
 });
@@ -34,7 +34,6 @@ bot.start(async (ctx) => {
   });
   cacheUserId(ctx.from.id);
   logger.info(`User ${ctx.from.id} logged in`);
-
 });
 
 bot.command('login', authController.handleLogin);
