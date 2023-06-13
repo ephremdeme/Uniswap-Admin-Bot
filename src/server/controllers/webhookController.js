@@ -1,4 +1,4 @@
-const { handlePoolRemoveNotification, handlePoolRemovedNotification, handleTokenExchangeNotification, handleTokenExchangedNotification, handleErrorNotification } = require('../../bot/controllers/notificationController');
+const { handlePoolRemoveNotification, handlePoolRemovedNotification, handleTokenExchangeNotification, handleTokenExchangedNotification, handleErrorNotification, handleMintLiquidityNotification, handleMintedLiquidityNotification } = require('../../bot/controllers/notificationController');
 const logger = require('../../utils/logger');
 
 function handleWebhook(req, res) {
@@ -16,6 +16,12 @@ function handleWebhook(req, res) {
       break;
     case 'tokenExchanged':
       handleTokenExchangedNotification(req.body);
+      break;
+    case 'poolMint':
+      handleMintLiquidityNotification(req.body);
+      break;
+    case 'poolMinted':
+      handleMintedLiquidityNotification(req.body);
       break;
     case 'error':
       handleErrorNotification(req.body);

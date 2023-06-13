@@ -61,6 +61,30 @@ async function handleTokenExchangedNotification({ data }) {
   }
 }
 
+async function handleMintLiquidityNotification({ data }) {
+  const { token0, token1, fee } = data
+  const message = `⚠️ Mint liquidation imminent!\n\nTokens: ${token0.symbol} - ${token1.symbol} \nAmount: ${token0.balance} - ${token1.balance} \nFee: ${fee}%`;
+  try {
+    await sendMessageToAllUsers(message);
+    logger.info(`Mint liquidation notification sent to All Users`);
+  } catch (err) {
+    logger.error(`Error sending mint liquidation notification: ${err.message}`);
+  }
+
+}
+
+async function handleMintedLiquidityNotification({ data }) {
+  const { txId, token0, token1, fee } = data
+  const message = `✅ Mint liquidation completed! \n\n Tx Id: ${txId}\n\nTokens: ${token0.symbol} - ${token1.symbol} \nAmount: ${token0.balance} - ${token1.balance} \nFee: ${fee}%`;
+  try {
+
+    await sendMessageToAllUsers(message);
+    logger.info(`Mint liquidation notification sent to All Users`);
+  } catch (err) {
+    logger.error(`Error sending mint liquidation notification: ${err.message}`);
+  }
+}
+
 async function handleErrorNotification({ data }) {
   const { method, reason, message: errorMessage, token0, token1, postion } = data
   let message = `❌ Error occurred during ${method}!\n\n`
@@ -86,5 +110,7 @@ module.exports = {
   handlePoolRemovedNotification,
   handleTokenExchangeNotification,
   handleTokenExchangedNotification,
+  handleMintLiquidityNotification,
+  handleMintedLiquidityNotification,
   handleErrorNotification,
 };
