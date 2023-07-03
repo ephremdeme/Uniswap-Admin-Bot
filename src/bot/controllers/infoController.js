@@ -27,6 +27,10 @@ async function handlePositions(ctx) {
       const positionsMessage = `Loading positions for wallet id ${data.split('-')[1].split('/')[2]} ⏳`;
       ctx.reply(positionsMessage);
       const positions = await axiosInstance.get(data.split('-')[1]).then(res => res.data)
+            
+      ctx.reply("Positions: ", Markup.inlineKeyboard([
+        Markup.button.webApp('📈 Mint Liquidity', `${process.env.WEB_URL}/webapp_add?url=${process.env.API_URL}/api${data.split('-')[1]}&token=${process.env.API_TOKEN}`)
+      ]))
 
       if (positions.length === 0)
         return ctx.reply('🚫 You have no open positions in this wallet.');
